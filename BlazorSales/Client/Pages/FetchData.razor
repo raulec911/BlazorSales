@@ -14,18 +14,25 @@
 }
 else
 {
-    <table class="table">
-        <thead>
+    <div class="form-group" style="margin-bottom:10px">
+        <input class="form-control" type="text" placeholder="Filter..."
+        @bind="Filter"
+        @bind:event="oninput">
+    </div>
+    <table class="table table-striped">
+        <thead class="thead-light">
             <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th scope="col">Date</th>
+                <th scope="col">Temp. (C)</th>
+                <th scope="col">Temp. (F)</th>
+                <th scope="col">Summary</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var forecast in forecasts)
             {
+                if (!IsVisible(forecast))
+                    continue;
                 <tr>
                     <td>@forecast.Date.ToShortDateString()</td>
                     <td>@forecast.TemperatureC</td>
@@ -34,7 +41,7 @@ else
                 </tr>
             }
         </tbody>
-    </table>
+    </table>  
 }
 
 @code {
@@ -43,5 +50,24 @@ else
     protected override async Task OnInitializedAsync()
     {
         forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+    }
+    public string Filter { get; set; }
+
+    public bool IsVisible(WeatherForecast forecast)
+    {
+        if (string.IsNullOrEmpty(Filter))
+            return true;
+
+        if (forecast.Summary.Contains(Filter, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (
+              forecast.TemperatureC.ToString().StartsWith(Filter) || 
+              forecast.TemperatureF.ToString().StartsWith(Filter) ||
+              forecast.Date.ToShortDateString().StartsWith(Filter)
+           )
+            return true;
+
+        return false;
     }
 }

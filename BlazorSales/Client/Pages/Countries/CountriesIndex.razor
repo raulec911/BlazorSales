@@ -1,0 +1,71 @@
+﻿@page "/countries"
+@inject IRepository repository
+
+<h3>Paises</h3>
+
+<div class="mb-3">
+    <a class="btn btn-primary" href="/countries/create">Nuevo País</a>
+</div>
+
+<GenericList MyList="Countries">
+    <Loading>
+        <p>Cargando...</p>
+    </Loading>
+    <Body>
+        <div class="form-group" style="margin-bottom:10px">
+            <input class="form-control" type="text" placeholder="Filter..."
+            @bind="Filter"
+            @bind:event="oninput">
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>País</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var country in Countries!)
+                {
+                    if (!IsVisible(country))
+                        continue;
+                    <tr>
+                        <td>
+                            @country.Name
+                        </td>
+                        <td>
+                            <a class="btn btn-warning">Editar</a>
+                            <button class="btn btn-danger">Borrar</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>        
+    </Body>
+</GenericList>
+
+
+
+@code {
+    public List<Country> Countries { get; set; }
+   
+    protected async override Task OnInitializedAsync()
+    {
+        var responseHppt = await repository.Get<List<Country>>("api/countries");
+        Countries = responseHppt.Response!;
+    }   
+
+    //Filter Table
+    public string Filter { get; set; }
+
+    public bool IsVisible(Country country)
+    {
+        if (string.IsNullOrEmpty(Filter))
+            return true;
+
+        if (country.Name.Contains(Filter, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
+    }
+}
