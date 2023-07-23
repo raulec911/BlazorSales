@@ -1,6 +1,7 @@
 ﻿@page "/countries"
 @inject IRepository repository
-
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
 <h3>Paises</h3>
 
 <div class="mb-3">
@@ -8,9 +9,6 @@
 </div>
 
 <GenericList MyList="Countries">
-    <Loading>
-        <p>Cargando...</p>
-    </Loading>
     <Body>
         <div class="form-group" style="margin-bottom:10px">
             <input class="form-control" type="text" placeholder="Filter..."
@@ -34,13 +32,14 @@
                             @country.Name
                         </td>
                         <td>
-                            <a class="btn btn-warning">Editar</a>
-                            <button class="btn btn-danger">Borrar</button>
+                            <a href="/countries/details/@country.Id" class="btn btn-info btn-sm"><i class="oi oi-list" /> Detalles</a>
+                            <a href="/countries/edit/@country.Id" class="btn btn-warning btn-sm"><i class="oi oi-pencil" /> Editar</a>
+                            <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(country.Id))><i class="oi oi-trash" /> Borrar</button>
                         </td>
                     </tr>
                 }
             </tbody>
-        </table>        
+        </table>
     </Body>
 </GenericList>
 
@@ -48,12 +47,48 @@
 
 @code {
     public List<Country> Countries { get; set; }
-   
+
     protected async override Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+    private async Task LoadAsync()
     {
         var responseHppt = await repository.Get<List<Country>>("api/countries");
         Countries = responseHppt.Response!;
-    }   
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        var result = await sweetAlertService.FireAsync(new SweetAlertOptions
+            {
+                Title = "Confirmación",
+                Text = "¿Realmente deseas eliminar el registro?",
+                Icon = SweetAlertIcon.Question,
+                ShowCancelButton = true,
+                CancelButtonText = "No",
+                ConfirmButtonText = "Si"
+            });
+
+        var confirm = string.IsNullOrEmpty(result.Value);
+        if (confirm)
+        {
+            return;
+        }
+
+        var responseHttp = await repository.Delete($"/api/countries/{id}");
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode != HttpStatusCode.NotFound)
+            {
+                var message = await responseHttp.GetErrorMessageAsync();
+                await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+                return;
+            }
+        }
+
+        await LoadAsync();
+    }
 
     //Filter Table
     public string Filter { get; set; }
@@ -68,4 +103,5 @@
 
         return false;
     }
+
 }
