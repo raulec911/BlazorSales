@@ -37,17 +37,49 @@ namespace BlazorSales.Server.Controllers
         [HttpPost]
         public async Task<ActionResult> PostAsync(Country country)
         {
-            _context.Countries.Add(country);
-            await _context.SaveChangesAsync();
-            return Ok();
+            try
+            {
+                _context.Countries.Add(country);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
+                {
+                    return BadRequest("Ya existe un país con el mismo nombre.");
+                }
+
+                return BadRequest(dbUpdateException.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpPut]
         public async Task<ActionResult> PutAsync(Country country)
         {
-            _context.Countries.Update(country);
-            await _context.SaveChangesAsync();
-            return Ok();
+            try
+            {
+                _context.Countries.Update(country);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
+                {
+                    return BadRequest("Ya existe un país con el mismo nombre.");
+                }
+
+                return BadRequest(dbUpdateException.Message);
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpDelete("{id:int}")]
