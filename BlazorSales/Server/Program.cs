@@ -1,9 +1,12 @@
 global using BlazorSales.Shared.Entities;
 global using BlazorSales.Server.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers()
+    .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 // Add services to the container.
 
 builder.Services.AddDbContext<DataContext>(options =>

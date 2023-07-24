@@ -19,7 +19,19 @@ namespace BlazorSales.Server.Controllers
         [HttpGet]
         public async Task<ActionResult> GetAsync()
         {
-            var result = await _context.Countries.ToListAsync();
+            var result = await _context.Countries
+                        .Include(x => x.States)
+                        .ToListAsync();
+            return Ok(result);
+        }
+
+        [HttpGet("full")]
+        public async Task<ActionResult> GetFullAsync()
+        {
+            var result = await _context.Countries
+                        .Include(x => x.States)
+                        .ThenInclude(x => x.Cities)
+                        .ToListAsync();
             return Ok(result);
         }
 
@@ -27,8 +39,8 @@ namespace BlazorSales.Server.Controllers
         public async Task<ActionResult> GetAsync(int Id)
         {
             var result = await _context.Countries.FirstOrDefaultAsync(c => c.Id == Id);
-            if(result == null)
-            { 
+            if (result == null)
+            {
                 return NotFound();
             }
             return Ok(result);
