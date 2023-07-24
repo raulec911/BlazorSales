@@ -1,7 +1,9 @@
 global using BlazorSales.Shared.Entities;
 global using BlazorSales.Server.Data;
+global using BlazorSales.Shared.Responses;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using BlazorSales.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<SeedDb>();
+
+builder.Services.AddScoped<IApiService, ApiService>();
 
 var app = builder.Build();
 

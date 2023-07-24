@@ -104,6 +104,9 @@
 
         if (country.Name.Contains(Filter, StringComparison.OrdinalIgnoreCase))
             return true;
+        
+        if (country.StatesNumber.ToString().Contains(Filter, StringComparison.OrdinalIgnoreCase))
+            return true;
 
         return false;
     }

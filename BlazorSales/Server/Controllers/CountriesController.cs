@@ -38,7 +38,11 @@ namespace BlazorSales.Server.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult> GetAsync(int Id)
         {
-            var result = await _context.Countries.FirstOrDefaultAsync(c => c.Id == Id);
+            var result = await _context.Countries
+                .Include(x => x.States!)
+                .ThenInclude(x => x.Cities)
+                .FirstOrDefaultAsync(x => x.Id == Id);
+
             if (result == null)
             {
                 return NotFound();

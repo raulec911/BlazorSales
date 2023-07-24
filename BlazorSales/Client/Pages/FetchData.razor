@@ -1,6 +1,7 @@
 ﻿@page "/fetchdata"
 @using BlazorSales.Shared
 @inject HttpClient Http
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Weather forecast</PageTitle>
 
@@ -14,12 +15,8 @@
 }
 else
 {
-    <div class="form-group" style="margin-bottom:10px">
-        <input class="form-control" type="text" placeholder="Filter..."
-        @bind="Filter"
-        @bind:event="oninput">
-    </div>
-    <table class="table table-striped">
+  
+   @* <table id="adminTable" class="table table-striped">
         <thead class="thead-light">
             <tr>
                 <th scope="col">Date</th>
@@ -31,8 +28,7 @@ else
         <tbody>
             @foreach (var forecast in forecasts)
             {
-                if (!IsVisible(forecast))
-                    continue;
+             
                 <tr>
                     <td>@forecast.Date.ToShortDateString()</td>
                     <td>@forecast.TemperatureC</td>
@@ -41,33 +37,59 @@ else
                 </tr>
             }
         </tbody>
-    </table>  
+    </table>  *@
+
+    <table id="adminTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Office</th>
+                <th>Salary</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Ashish Kumar</td>
+                <td>PHP</td>
+                <td>Office ABC</td>
+                <td>100000</td>
+            </tr>
+            <tr>
+                <td>Vijay Kumar</td>
+                <td>Wordpress</td>
+                <td>Office PQR</td>
+                <td>80000</td>
+            </tr>
+            <tr>
+                <td>Dhananjay Negi</td>
+                <td>Node Js</td>
+                <td>Office XYZ</td>
+                <td>150000</td>
+            </tr>
+        </tbody>
+    </table>
+
 }
 
 @code {
     private WeatherForecast[]? forecasts;
 
+
+
     protected override async Task OnInitializedAsync()
     {
         forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+        
     }
-    public string Filter { get; set; }
-
-    public bool IsVisible(WeatherForecast forecast)
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (string.IsNullOrEmpty(Filter))
-            return true;
-
-        if (forecast.Summary.Contains(Filter, StringComparison.OrdinalIgnoreCase))
-            return true;
-
-        if (
-              forecast.TemperatureC.ToString().StartsWith(Filter) || 
-              forecast.TemperatureF.ToString().StartsWith(Filter) ||
-              forecast.Date.ToShortDateString().StartsWith(Filter)
-           )
-            return true;
-
-        return false;
+        if (firstRender)
+        {
+            await JSRuntime.InvokeAsync<object>("initializeDataTable", "#adminTable");
+        }
     }
 }
+
+
