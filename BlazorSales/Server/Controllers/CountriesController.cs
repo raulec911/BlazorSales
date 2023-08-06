@@ -25,6 +25,13 @@ namespace BlazorSales.Server.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
+        [HttpGet("combo")]
+        public async Task<ActionResult> GetCombo()
+        {
+            return Ok(await _context.Countries.ToListAsync());
+        }
+
         [HttpGet("full")]
         public async Task<ActionResult> GetFullAsync()
         {

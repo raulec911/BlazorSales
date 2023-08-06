@@ -24,6 +24,16 @@ namespace BlazorSales.Server.Controllers
                 .ToListAsync());
         }
 
+        [AllowAnonymous]
+        [HttpGet("combo/{countryId:int}")]
+        public async Task<ActionResult> GetCombo(int countryId)
+        {
+            return Ok(await _context.States
+            .Where(x => x.CountryId == countryId)
+            .ToListAsync());
+        }
+
+
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAsync(int id)
         {
