@@ -13,8 +13,8 @@
     <Body>
         <div class="form-group" style="margin-bottom:10px">
             <input class="form-control" type="text" placeholder="Filter..."
-            @bind="Filter"
-            @bind:event="oninput">
+                   @bind="Filter"
+                   @bind:event="oninput">
         </div>
         <table class="table table-striped">
             <thead>
@@ -59,8 +59,21 @@
     }
     private async Task LoadAsync()
     {
-        var responseHppt = await repository.Get<List<Country>>("api/countries");
-        Countries = responseHppt.Response!;
+        try
+        {
+
+            var responseHppt = await repository.Get<List<Country>>("api/countries");
+            Countries = responseHppt.Response!;
+
+            if (Countries == null)
+            {
+                await sweetAlertService.FireAsync("Error", "Error", SweetAlertIcon.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            await sweetAlertService.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
+        }
     }
 
     private async Task DeleteAsync(int id)
@@ -105,7 +118,7 @@
 
         if (country.Name.Contains(Filter, StringComparison.OrdinalIgnoreCase))
             return true;
-        
+
         if (country.StatesNumber.ToString().Contains(Filter, StringComparison.OrdinalIgnoreCase))
             return true;
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using BlazorSales.Shared.DTOs;
+using Microsoft.AspNetCore.Identity;
 
 namespace BlazorSales.Server.Helpers
 {
@@ -9,5 +10,7 @@ namespace BlazorSales.Server.Helpers
         Task CheckRoleAsync(string roleName);
         Task AddUserToRoleAsync(User user, string roleName);
         Task<bool> IsUserInRoleAsync(User user, string roleName);
+        Task<SignInResult> LoginAsync(LoginDTO model);
+        Task LogoutAsync();
     }
 }
