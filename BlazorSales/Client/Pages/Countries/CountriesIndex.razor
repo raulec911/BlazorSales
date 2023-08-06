@@ -64,11 +64,6 @@
 
             var responseHppt = await repository.Get<List<Country>>("api/countries");
             Countries = responseHppt.Response!;
-
-            if (Countries == null)
-            {
-                await sweetAlertService.FireAsync("Error", "Error", SweetAlertIcon.Error);
-            }
         }
         catch (Exception ex)
         {

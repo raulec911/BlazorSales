@@ -88,10 +88,6 @@ app.UseSwagger();
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
-
-
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
@@ -101,5 +97,14 @@ app.UseRouting();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+//app.UseCors(x => x
+//    .AllowAnyMethod()
+//    .AllowAnyHeader()
+//    .SetIsOriginAllowed(origin => true)
+//    .AllowCredentials());
 
 app.Run();

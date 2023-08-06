@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using CurrieTechnologies.Razor.SweetAlert2;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorSales.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/countries")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     public class CountriesController : ControllerBase
@@ -19,8 +20,8 @@ namespace BlazorSales.Server.Controllers
         public async Task<ActionResult> GetAsync()
         {
             var result = await _context.Countries
-                        .Include(x => x.States)
-                        .ToListAsync();
+                          .Include(x => x.States)
+                          .ToListAsync();
             return Ok(result);
         }
 
