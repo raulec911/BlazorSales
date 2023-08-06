@@ -4,50 +4,56 @@
 @inject SweetAlertService sweetAlertService
 @attribute [Authorize(Roles = "Admin")]
 <h3>Paises</h3>
+@if (Countries is null)
+{
+    <div class="spinner" />
+}
+else
+{
 
-<div class="mb-3">
-    <a class="btn btn-primary" href="/countries/create">Nuevo País</a>
-</div>
+    <div class="mb-3">
+        <a class="btn btn-primary" href="/countries/create">Nuevo País</a>
+    </div>
 
-<GenericList MyList="Countries">
-    <Body>
-        <div class="form-group" style="margin-bottom:10px">
-            <input class="form-control" type="text" placeholder="Filter..."
-                   @bind="Filter"
-                   @bind:event="oninput">
-        </div>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>País</th>
-                    <th>Estados / Departamentos</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var country in Countries!)
-                {
-                    if (!IsVisible(country))
-                        continue;
+    <GenericList MyList="Countries">
+        <Body>
+            <div class="form-group" style="margin-bottom:10px">
+                <input class="form-control" type="text" placeholder="Filter..."
+                @bind="Filter"
+                @bind:event="oninput">
+            </div>
+            <table class="table table-striped">
+                <thead>
                     <tr>
-                        <td>
-                            @country.Name
-                        </td>
-                        <td>
-                            @country.StatesNumber
-                        </td>
-                        <td>
-                            <a href="/countries/details/@country.Id" class="btn btn-info btn-sm"><i class="oi oi-list" /> Detalles</a>
-                            <a href="/countries/edit/@country.Id" class="btn btn-warning btn-sm"><i class="oi oi-pencil" /> Editar</a>
-                            <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(country.Id))><i class="oi oi-trash" /> Borrar</button>
-                        </td>
+                        <th>País</th>
+                        <th>Estados / Departamentos</th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </Body>
-</GenericList>
-
+                </thead>
+                <tbody>
+                    @foreach (var country in Countries!)
+                    {
+                        if (!IsVisible(country))
+                            continue;
+                        <tr>
+                            <td>
+                                @country.Name
+                            </td>
+                            <td>
+                                @country.StatesNumber
+                            </td>
+                            <td>
+                                <a href="/countries/details/@country.Id" class="btn btn-info btn-sm"><i class="oi oi-list" /> Detalles</a>
+                                <a href="/countries/edit/@country.Id" class="btn btn-warning btn-sm"><i class="oi oi-pencil" /> Editar</a>
+                                <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(country.Id))><i class="oi oi-trash" /> Borrar</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </Body>
+    </GenericList>
+}
 
 
 @code {
