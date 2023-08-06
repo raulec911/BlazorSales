@@ -1,9 +1,11 @@
 global using BlazorSales.Shared.Entities;
 global using BlazorSales.Server.Data;
 global using BlazorSales.Shared.Responses;
+global using BlazorSales.Server.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using BlazorSales.Server.Services;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +27,19 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<SeedDb>();
 
 builder.Services.AddScoped<IApiService, ApiService>();
+builder.Services.AddScoped<IUserHelper, UserHelper>();
+
+builder.Services.AddIdentity<User, IdentityRole>(x =>
+{
+    x.User.RequireUniqueEmail = true;
+    x.Password.RequireDigit = false;
+    x.Password.RequiredUniqueChars = 0;
+    x.Password.RequireLowercase = false;
+    x.Password.RequireNonAlphanumeric = false;
+    x.Password.RequireUppercase = false;
+})
+.AddEntityFrameworkStores<DataContext>()
+.AddDefaultTokenProviders();
 
 var app = builder.Build();
 
@@ -58,6 +73,10 @@ else
 app.UseSwagger();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();

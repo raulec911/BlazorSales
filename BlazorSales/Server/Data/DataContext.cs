@@ -1,9 +1,10 @@
-﻿using BlazorSales.Shared.Entities;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorSales.Server.Data
 {
-    public class DataContext : DbContext
+    //public class DataContext : DbContext
+    public class DataContext : IdentityDbContext<User>
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
@@ -12,6 +13,7 @@ namespace BlazorSales.Server.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Country>().HasIndex(x => x.Name).IsUnique();
             modelBuilder.Entity<Country>().HasKey(c => c.Id);
 
